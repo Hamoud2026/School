@@ -1,9 +1,0 @@
-export type Role = 'PRINCIPAL' | 'ADMIN' | 'TEACHER' | 'PARENT';
-export type Student = { id:string; firstName:string; lastName:string; dob:string; level:string; classId:string; parentName?:string; parentEmail?:string; balance:number; points:number; stamps:number; };
-export type ClassRoom = { id:string; name:string; level:string; teacher:string; schedule:string; };
-export type Homework = { id:string; classId:string; title:string; revision:string; date:string; dueDate:string; teacher:string; };
-export type Score = { id:string; studentId:string; classId:string; date:string; score:number; notes:string; points:number; stamps:number; };
-export type Announcement = { id:string; title:string; body:string; audience:'ALL'|'PARENTS'|'STUDENTS'|'TEACHERS'; date:string; };
-export type Payment = { id:string; studentId:string; amount:number; dueDate:string; status:'DUE'|'PAID'|'PENDING_REVIEW'; receiptName?:string; note?:string; };
-export type Enrollment = { id:string; firstName:string; lastName:string; dob:string; parentName:string; parentEmail:string; level:string; status:'NEW'|'APPROVED'|'REJECTED'; };
-export type DB = { students:Student[]; classes:ClassRoom[]; homework:Homework[]; scores:Score[]; announcements:Announcement[]; payments:Payment[]; enrollments:Enrollment[]; };

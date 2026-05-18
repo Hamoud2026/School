@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PRINCIPAL
+  ADMIN
+  TEACHER
+  PARENT
+  PENDING
+}
+
+enum PaymentStatus {
+  DUE
+  PENDING
+  PAID
+  OVERDUE
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+model User {
+  id String @id @default(cuid())
+  name String?
+  email String @unique
+  passwordHash String
+  role Role @default(PENDING)
+  requestedRole Role?
+  approvedAt DateTime?
+  createdAt DateTime @default(now())
+  teacherClasses Class[] @relation("TeacherClasses")
+  parentLinks ParentStudent[]
+  announcements Announcement[]
+}
+
+model Student {
+  id String @id @default(cuid())
+  firstName String
+  lastName String
+  dateOfBirth DateTime
+  studentCode String @unique
+  level String?
+  createdAt DateTime @default(now())
+  enrollments ClassEnrollment[]
+  parentLinks ParentStudent[]
+  classUpdates ClassUpdate[]
+  payments Payment[]
+}
+
+model ParentStudent {
+  id String @id @default(cuid())
+  parentId String
+  studentId String
+  approved Boolean @default(true)
+  parent User @relation(fields:[parentId], references:[id], onDelete:Cascade)
+  student Student @relation(fields:[studentId], references:[id], onDelete:Cascade)
+  @@unique([parentId, studentId])
+}
+
+model Class {
+  id String @id @default(cuid())
+  name String
+  level String
+  schedule String?
+  teacherId String?
+  teacher User? @relation("TeacherClasses", fields:[teacherId], references:[id])
+  enrollments ClassEnrollment[]
+  updates ClassUpdate[]
+  createdAt DateTime @default(now())
+}
+
+model ClassEnrollment {
+  id String @id @default(cuid())
+  classId String
+  studentId String
+  class Class @relation(fields:[classId], references:[id], onDelete:Cascade)
+  student Student @relation(fields:[studentId], references:[id], onDelete:Cascade)
+  @@unique([classId, studentId])
+}
+
+model ClassUpdate {
+  id String @id @default(cuid())
+  classId String
+  studentId String
+  teacherId String
+  date DateTime @default(now())
+  homework String?
+  revision String?
+  score Int?
+  points Int @default(0)
+  stamps Int @default(0)
+  attendance AttendanceStatus @default(PRESENT)
+  privateNote String?
+  class Class @relation(fields:[classId], references:[id], onDelete:Cascade)
+  student Student @relation(fields:[studentId], references:[id], onDelete:Cascade)
+}
+
+model Announcement {
+  id String @id @default(cuid())
+  title String
+  body String
+  audience String @default("ALL")
+  authorId String
+  author User @relation(fields:[authorId], references:[id])
+  createdAt DateTime @default(now())
+}
+
+model Payment {
+  id String @id @default(cuid())
+  studentId String
+  amount Int
+  dueDate DateTime
+  status PaymentStatus @default(DUE)
+  receiptUrl String?
+  confirmedAt DateTime?
+  student Student @relation(fields:[studentId], references:[id], onDelete:Cascade)
+}
