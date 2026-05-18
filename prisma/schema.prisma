@@ -29,18 +29,33 @@ enum AttendanceStatus {
   EXCUSED
 }
 
+enum AccountStatus {
+  ACTIVE
+  BLOCKED
+}
+
+enum JoinRequestStatus {
+  WAITING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id String @id @default(cuid())
   name String?
   email String @unique
   passwordHash String
   role Role @default(PENDING)
+  status AccountStatus @default(ACTIVE)
   requestedRole Role?
   approvedAt DateTime?
+  blockedAt DateTime?
   createdAt DateTime @default(now())
   teacherClasses Class[] @relation("TeacherClasses")
   parentLinks ParentStudent[]
   announcements Announcement[]
+  registrationLinks RegistrationLink[]
+  reviewedJoinRequests JoinRequest[] @relation("JoinRequestReviewer")
 }
 
 model Student {
@@ -101,6 +116,7 @@ model ClassUpdate {
   stamps Int @default(0)
   attendance AttendanceStatus @default(PRESENT)
   privateNote String?
+  homeworkPhotoUrl String?
   class Class @relation(fields:[classId], references:[id], onDelete:Cascade)
   student Student @relation(fields:[studentId], references:[id], onDelete:Cascade)
 }
@@ -122,8 +138,39 @@ model Payment {
   dueDate DateTime
   status PaymentStatus @default(DUE)
   receiptUrl String?
+  evidenceNote String?
+  reminderSentAt DateTime?
   confirmedAt DateTime?
   student Student @relation(fields:[studentId], references:[id], onDelete:Cascade)
+}
+
+model RegistrationLink {
+  id String @id @default(cuid())
+  token String @unique
+  title String
+  active Boolean @default(true)
+  createdAt DateTime @default(now())
+  expiresAt DateTime?
+  createdById String
+  createdBy User @relation(fields:[createdById], references:[id])
+  requests JoinRequest[]
+}
+
+model JoinRequest {
+  id String @id @default(cuid())
+  registrationLinkId String
+  parentName String
+  parentEmail String
+  studentFirstName String
+  studentLastName String
+  studentDateOfBirth DateTime
+  note String?
+  status JoinRequestStatus @default(WAITING)
+  createdAt DateTime @default(now())
+  reviewedAt DateTime?
+  reviewedById String?
+  registrationLink RegistrationLink @relation(fields:[registrationLinkId], references:[id], onDelete:Cascade)
+  reviewedBy User? @relation("JoinRequestReviewer", fields:[reviewedById], references:[id])
 }
 
 model school_store {

@@ -42,7 +42,7 @@ export default async function Dashboard() {
 
   const canManageSchool = currentUser.role === 'PRINCIPAL' || currentUser.role === 'ADMIN'
 
-  const [users, students, classes, announcements, payments] = await Promise.all([
+  const [users, students, classes, announcements, payments, registrationLinks, joinRequests, teachers] = await Promise.all([
    currentUser.role === 'PRINCIPAL' ? prisma.user.findMany({ orderBy: { createdAt: 'desc' } }) : Promise.resolve([]),
    canManageSchool
     ? prisma.student.findMany({ include: { classUpdates: { orderBy: { date: 'desc' }, take: 1 }, payments: true } })
@@ -60,9 +60,12 @@ export default async function Dashboard() {
     : currentUser.role === 'PARENT'
      ? prisma.payment.findMany({ where: { student: { parentLinks: { some: { parentId: currentUser.id } } } }, include: { student: true }, orderBy: { dueDate: 'desc' } })
      : Promise.resolve([]),
+   currentUser.role === 'PRINCIPAL' ? prisma.registrationLink.findMany({ include: { requests: true }, orderBy: { createdAt: 'desc' } }) : Promise.resolve([]),
+   currentUser.role === 'PRINCIPAL' ? prisma.joinRequest.findMany({ include: { registrationLink: true }, orderBy: { createdAt: 'desc' } }) : Promise.resolve([]),
+   canManageSchool ? prisma.user.findMany({ where: { role: 'TEACHER', status: 'ACTIVE' }, orderBy: { name: 'asc' } }) : Promise.resolve([]),
   ])
 
-  return <DashboardClient currentUser={currentUser as any} users={users as any} students={students as any} classes={classes as any} announcements={announcements as any} payments={payments as any} />
+  return <DashboardClient currentUser={currentUser as any} users={users as any} students={students as any} classes={classes as any} announcements={announcements as any} payments={payments as any} registrationLinks={registrationLinks as any} joinRequests={joinRequests as any} teachers={teachers as any} />
  } catch (error) {
   const message = error instanceof Error ? error.message : 'Unknown database error'
   return <DashboardSetupError message={message} />

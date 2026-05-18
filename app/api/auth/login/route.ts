@@ -14,6 +14,10 @@ export async function POST(req: Request) {
    return NextResponse.json({ error: 'Invalid email or password.' }, { status: 401 })
   }
 
+  if (user.status === 'BLOCKED') {
+   return NextResponse.json({ error: 'This account is blocked. Contact the school principal.' }, { status: 403 })
+  }
+
   const validPassword = await bcrypt.compare(password, user.passwordHash)
   if (!validPassword) {
    return NextResponse.json({ error: 'Invalid email or password.' }, { status: 401 })

@@ -19,6 +19,9 @@ export async function POST(req: Request) {
    score: b.score ? Number(b.score) : undefined,
    points: b.points ? Number(b.points) : 0,
    stamps: b.stamps ? Number(b.stamps) : 0,
+   attendance: b.attendance || 'PRESENT',
+   privateNote: b.privateNote,
+   homeworkPhotoUrl: b.homeworkPhotoUrl,
   },
  })
  return NextResponse.json(update)
