@@ -57,6 +57,9 @@ export default function Home() {
        <Link href="/register" className="rounded-lg border border-slate-300 bg-white/80 px-5 py-3 font-semibold text-slate-900 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:bg-white">
         Create account
        </Link>
+       <Link href="/join" className="rounded-lg border border-slate-300 bg-white/80 px-5 py-3 font-semibold text-slate-900 shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:bg-white">
+        Student registration
+       </Link>
       </div>
       <div className="home-fade-up mt-10 grid max-w-2xl gap-3 sm:grid-cols-3">
        {metrics.map(({ label, value, Icon, color }) => (
