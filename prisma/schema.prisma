@@ -125,3 +125,8 @@ model Payment {
   confirmedAt DateTime?
   student Student @relation(fields:[studentId], references:[id], onDelete:Cascade)
 }
+
+model school_store {
+  key     String @id
+  payload Json
+}
