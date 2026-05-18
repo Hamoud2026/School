@@ -2,3 +2,72 @@
 @tailwind components;
 @tailwind utilities;
 body { background:#f8fafc; }
+
+@keyframes homeFadeUp {
+ from {
+  opacity: 0;
+  transform: translateY(18px);
+ }
+ to {
+  opacity: 1;
+  transform: translateY(0);
+ }
+}
+
+@keyframes homeFloat {
+ 0%, 100% {
+  transform: translateY(0) rotate(0deg);
+ }
+ 50% {
+  transform: translateY(-12px) rotate(0.5deg);
+ }
+}
+
+@keyframes homeActivity {
+ 0% {
+  opacity: 0;
+  transform: translateX(18px);
+ }
+ 100% {
+  opacity: 1;
+  transform: translateX(0);
+ }
+}
+
+@keyframes homeProgress {
+ from {
+  width: 18%;
+ }
+ to {
+  width: 86%;
+ }
+}
+
+.home-fade-up {
+ animation: homeFadeUp 700ms ease both;
+}
+
+.home-fade-up:nth-of-type(2) {
+ animation-delay: 90ms;
+}
+
+.home-preview {
+ animation: homeFloat 7s ease-in-out infinite;
+}
+
+.home-activity {
+ animation: homeActivity 560ms ease both;
+}
+
+.home-progress {
+ animation: homeProgress 1.8s ease-out both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+ .home-fade-up,
+ .home-preview,
+ .home-activity,
+ .home-progress {
+  animation: none;
+ }
+}
